@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import { Mongoose } from 'mongoose';
+import Pagination from "react-js-pagination";
+// require("bootstrap/less/bootstrap.less");
 
 class App extends Component {
 
@@ -9,11 +10,27 @@ class App extends Component {
             title: '',
             description: '',
             tasks: [],
-            _id: ''
+            _id: '',
+            activePage: 1,
+            page: 1,
+            pages: 1
         };
         this.addTask = this.addTask.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
+
+    handlePageChange(pageNumber) {
+        fetch(`http://localhost:3000/api/tasks/pagination/${pageNumber}`)
+            .then(res => res.json())
+            .then(data => {
+                const { tasks, page, pages} = data;
+                this.setState({tasks, page, pages});
+                console.log(data); 
+            });
+
+        console.log(`active page is ${pageNumber}`);
+        this.setState({activePage: pageNumber});
+      }
 
     addTask(e) {
         if(this.state._id) {
@@ -30,7 +47,8 @@ class App extends Component {
                 console.log(data);
                 M.toast({html: 'Task Updated'});
                 this.setState({title: '', description: '', _id: ''});
-                this.fetchTask();
+                // this.fetchTask();
+                this.handlePageChange(this.state.page);
             });
 
         } else {
@@ -47,7 +65,8 @@ class App extends Component {
                     console.log(data)
                     M.toast({html: 'Task Saved'});
                     this.setState({title: '', description: ''});
-                    this.fetchTask();
+                    // this.fetchTask();
+                    this.handlePageChange(this.state.page);
                 })
                 .catch(err => console.error(err));
 
@@ -57,7 +76,8 @@ class App extends Component {
     }
 
     componentDidMount() {
-        this.fetchTask();
+        // this.fetchTask();
+        this.handlePageChange(1);
     }
 
     fetchTask() {
@@ -82,7 +102,8 @@ class App extends Component {
             .then(data => {
                 console.log(data);
                 M.toast({html: 'Task Deleted'});
-                this.fetchTask();
+                // this.fetchTask();
+                this.handlePageChange(this.state.page);
             });
         }
     }
@@ -169,6 +190,13 @@ class App extends Component {
                                     }
                                 </tbody>
                             </table>
+                            <Pagination
+                                activePage={this.state.activePage}
+                                itemsCountPerPage={5}
+                                totalItemsCount={450}
+                                pageRangeDisplayed={5}
+                                onChange={i => this.handlePageChange(i)}
+                            />
                         </div>
                     </div>
                 </div>
