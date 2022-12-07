@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/duvanF/MERNstack-frontend#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.18.2"
   },
   "devDependencies": {
     "@babel/core": "^7.8.3",
